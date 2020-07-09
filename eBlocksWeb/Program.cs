@@ -21,6 +21,5 @@ namespace eBlocksWeb
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
-    }
+                });    }
 }

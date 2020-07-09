@@ -1,7 +1,11 @@
+using Client;
+using eBlocksWeb.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace eBlocksWeb
@@ -18,6 +22,14 @@ namespace eBlocksWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<ClientOptions>(Configuration.GetSection("HttpClient"));
+
+            services.AddScoped(typeof(IQueryHandler<>), typeof(QueryHandler<>));
+            services.AddScoped(typeof(ICommandHandler<>), typeof(CommandHandler<>));
+
+            services.AddApiClient(Configuration.GetSection("HttpClient"));
+
             services.AddControllersWithViews();
         }
 
