@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eBlocksWeb.Handlers;
 using eBlocksWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,16 @@ namespace eBlocksWeb.Controllers
 {
     public class CategoryController : Controller
     {
+        private readonly ICommandHandler<Category> _commandHandler;
+        private readonly IQueryHandler<Category> _queryHandler;
+
+
+        public CategoryController(ICommandHandler<Category> CategoryCommandHandler, IQueryHandler<Category> CategoryQueryHandler)
+        {
+            _commandHandler = CategoryCommandHandler;
+            _queryHandler = CategoryQueryHandler;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -17,46 +28,63 @@ namespace eBlocksWeb.Controllers
 
         public async Task<JsonResult> Search()
         {
-            var result = new List<Category>()
+             var result = await _queryHandler.GetAllAsync(Default.GetClassificationEndpoint(nameof(Category)));
+
+            return Json(new { result.Content });
+        }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] Category category)
+        {
+            var success = false;
+
+            if (ModelState.IsValid)
             {
-                {new Category(){Id="23", Name="Test", Description = "Test", Images = "Test"} }
-            };
+              var result =  await _commandHandler.PostAsync(Default.GetClassificationEndpoint(nameof(Category)), category);
 
+                if(!result.IsError)
+                {
+                    success = true;
+                }
+            }
 
-            return Json(new { result });
+            return Json(new { success });
         }
 
-        public async Task<IActionResult> Add()
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromBody] Category category)
         {
-            var result = new List<Category>()
+            var success = false;
+
+            if (ModelState.IsValid)
             {
-                {new Category(){Id="23", Name="Test", Description = "Test", Images = "Test"} }
-            };
+                var result = await _commandHandler.PutAsync(Default.GetClassificationEndpoint(nameof(Category)), category, category.Id);
 
+                if (!result.IsError)
+                {
+                    success = true;
+                }
+            }
 
-            return Json(new { result });
+            return Json(new { success });
         }
 
-        public async Task<IActionResult> Edit()
+        public async Task<IActionResult> Delete(string id)
         {
-            var result = new List<Category>()
+            var success = false;
+
+            if (ModelState.IsValid)
             {
-                {new Category(){Id="23", Name="Test", Description = "Test", Images = "Test"} }
-            };
+                var result = await _commandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Category)), id);
 
+                if (!result.IsError)
+                {
+                    success = true;
+                }
+            }
 
-            return Json(new { result });
-        }
-
-        public async Task<IActionResult> Delete()
-        {
-            var result = new List<Category>()
-            {
-                {new Category(){Id="23", Name="Test", Description = "Test", Images = "Test"} }
-            };
-
-
-            return Json(new { result });
+            return Json(new { success });
         }
     }
 }
