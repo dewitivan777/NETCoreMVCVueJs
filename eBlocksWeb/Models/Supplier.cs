@@ -22,7 +22,7 @@ namespace eBlocksWeb.Models
         [Required]
         public string Region { get; set; }
         [Required]
-        public int? PostalCode { get; set; }
+        public string PostalCode { get; set; }
         [Required]
         public string Country { get; set; }
         public string Phone { get; set; }

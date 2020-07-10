@@ -31,17 +31,20 @@
                                             <v-col cols="12" sm="6" md="4">
                                                 <v-text-field v-model="editedItem.name" label="Supplier Name" :error-messages="modelstate['Name']"></v-text-field>
                                             </v-col>
-                                            
+
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.contactName" label="Contact Name" :error-messages="modelstate['contactName']"></v-text-field>
+                                                <v-text-field v-model="editedItem.contactName" label="Contact Name" :error-messages="modelstate['ContactName']"></v-text-field>
                                             </v-col>
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.contactTitle" label="Contact Title" :error-messages="modelstate['ContactTitle']"></v-text-field>
+                                                <v-select v-model="editedItem.contactTitle"
+                                                          :items="contactTitles"
+                                                          :error-messages="modelstate['ContactTitle']"
+                                                          label="Contact Title"></v-select>
                                             </v-col>
                                             <v-col cols="12" sm="12" md="12">
                                                 <v-text-field v-model="editedItem.address" label="Address" :error-messages="modelstate['Address']"></v-text-field>
                                             </v-col>
-                                            <v-col cols="12" sm="12" md="12">
+                                            <v-col cols="12" sm="6" md="4">
                                                 <v-text-field v-model="editedItem.city" label="City" :error-messages="modelstate['City']"></v-text-field>
                                             </v-col>
                                             <v-col cols="12" sm="6" md="4">
@@ -59,7 +62,7 @@
                                             <v-col cols="12" sm="6" md="4">
                                                 <v-text-field v-model="editedItem.fax" label="Fax" :error-messages="modelstate['Fax']"></v-text-field>
                                             </v-col>
-                                            <v-col cols="12" sm="6" md="4">
+                                            <v-col cols="12" sm="12" md="12">
                                                 <v-text-field v-model="editedItem.website" label="Website" :error-messages="modelstate['Website']"></v-text-field>
                                             </v-col>
 
@@ -104,6 +107,7 @@
             return {
                 suppliers: [],
                 modelstate: {},
+                contactTitles: ['Mr', 'Mrs', 'Miss', 'Ms', 'Dr', 'Sir'],
                 dialog: false,
                 headers: [
                     {
@@ -168,8 +172,8 @@
                 let self = this;
                 this.$axios.get('/supplier/search')
                     .then(function (response) {
-                        console.log(response);
-                        self.supplier = response.data.content
+                        console.log(response.data.content);
+                        self.suppliers = response.data.content
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -194,16 +198,16 @@
                 })
             },
             save() {
+                let self = this;
+                self.modelstate = {}
                 if (this.editedIndex > -1) {
-                    let self = this;
-                    self.modelstate = {}
                     this.$axios({
                         method: 'post',
                         url: '/supplier/edit',
                         headers: { 'Content-Type': 'application/json' },
                         data: JSON.stringify(self.editedItem)
                     }).then((response) => {
-                        Object.assign(self.supplier[self.editedIndex], self.editedItem)
+                        Object.assign(self.supplier[self.editedIndex], response.data.result.content)
                         self.close();
                     }, (error) => {
                         if (error.response.status == 400) {
@@ -211,15 +215,13 @@
                         }
                     });
                 } else {
-                    let self = this;
-                    console.log(self.editedItem);
                     this.$axios({
                         method: 'post',
                         url: '/supplier/Add',
                         headers: { 'Content-Type': 'application/json' },
                         data: JSON.stringify(self.editedItem)
                     }).then((response) => {
-                        self.supplier.push(self.editedItem);
+                        self.suppliers.push(response.data.result.content);
                         self.close();
                     }, (error) => {
                         if (error.response.status == 400) {
@@ -227,7 +229,6 @@
                         }
                     });
                 }
-
             }
         },
         mounted() {

@@ -26,7 +26,6 @@ namespace eBlocksWeb.Controllers
             return View();
         }
 
-
         public async Task<JsonResult> Search()
         {
             var result = await _queryHandler.GetAllAsync(Default.GetClassificationEndpoint(nameof(Category)));
@@ -47,13 +46,7 @@ namespace eBlocksWeb.Controllers
 
             var result = await _commandHandler.PostAsync(Default.GetClassificationEndpoint(nameof(Category)), category);
 
-            if (!result.IsError)
-            {
-                success = true;
-            }
-
-
-            return Json(new { success });
+            return Json(new { result });
         }
 
         [HttpPost]
@@ -68,13 +61,7 @@ namespace eBlocksWeb.Controllers
 
             var result = await _commandHandler.PutAsync(Default.GetClassificationEndpoint(nameof(Category)), category, category.Id);
 
-            if (!result.IsError)
-            {
-                success = true;
-            }
-
-
-            return Json(new { success });
+            return Json(new { result });
         }
 
         public async Task<IActionResult> Delete(string id)

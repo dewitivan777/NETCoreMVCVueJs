@@ -2,20 +2,23 @@
 using eBlocksWeb.Helpers;
 using eBlocksWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace eBlocksWeb.Controllers
 {
-    public class SupplierController : Controller
+    public class ProductController : Controller
     {
-        private readonly ICommandHandler<Supplier> _commandHandler;
-        private readonly IQueryHandler<Supplier> _queryHandler;
+        private readonly ICommandHandler<Product> _commandHandler;
+        private readonly IQueryHandler<Product> _queryHandler;
 
 
-        public SupplierController(ICommandHandler<Supplier> SupplierCommandHandler, IQueryHandler<Supplier> SupplierQueryHandler)
+        public ProductController(ICommandHandler<Product> ProductCommandHandler, IQueryHandler<Product> ProductQueryHandler)
         {
-            _commandHandler = SupplierCommandHandler;
-            _queryHandler = SupplierQueryHandler;
+            _commandHandler = ProductCommandHandler;
+            _queryHandler = ProductQueryHandler;
         }
 
         public IActionResult Index()
@@ -25,34 +28,34 @@ namespace eBlocksWeb.Controllers
 
         public async Task<JsonResult> Search()
         {
-            var result = await _queryHandler.GetAllAsync(Default.GetClassificationEndpoint(nameof(Supplier)));
+            var result = await _queryHandler.GetAllAsync(Default.GetProductEndpoint(nameof(Product)));
 
             return Json(new { result.Content });
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Supplier supplier)
+        public async Task<IActionResult> Add([FromBody] Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetModelStateErrors());
             }
 
-            var result = await _commandHandler.PostAsync(Default.GetClassificationEndpoint(nameof(Supplier)), supplier);
+            var result = await _commandHandler.PostAsync(Default.GetProductEndpoint(nameof(Product)), product);
 
             return Json(new { result });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromBody] Supplier supplier)
+        public async Task<IActionResult> Edit([FromBody] Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetModelStateErrors());
             }
 
-            var result = await _commandHandler.PutAsync(Default.GetClassificationEndpoint(nameof(Supplier)), supplier, supplier.Id);
+            var result = await _commandHandler.PutAsync(Default.GetProductEndpoint(nameof(Product)), product, product.Id);
 
             return Json(new { result });
         }
@@ -63,7 +66,7 @@ namespace eBlocksWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _commandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Supplier)), id);
+                var result = await _commandHandler.DeleteAsync(Default.GetProductEndpoint(nameof(Product)), id);
 
                 if (!result.IsError)
                 {

@@ -22,7 +22,7 @@ namespace eBlocksWeb.Helpers
             {
                 foreach (KeyValuePair<string, string[]> kvp in errors)
                 {
-                    output += "\"" + kvp.Key.Replace(".", "") + "\":\"" + String.Join(", ", kvp.Value) + "\",";
+                    output += "\"" + kvp.Key.Replace(".", "").Replace("$","") + "\":\"" + String.Join(", ", kvp.Value) + "\",";
                 }
             }
             output = output.TrimEnd(',');

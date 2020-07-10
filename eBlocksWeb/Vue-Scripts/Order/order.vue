@@ -1,13 +1,13 @@
 ﻿<template>
-    <div id="category">
+    <div id="order">
         <v-app id="inspire">
             <v-data-table :headers="headers"
-                          :items="categories"
+                          :items="orders"
                           sort-by="name"
                           class="elevation-1">
                 <template v-slot:top>
                     <v-toolbar flat color="white">
-                        <v-toolbar-title>Categories</v-toolbar-title>
+                        <v-toolbar-title>Orders</v-toolbar-title>
                         <v-divider class="mx-4"
                                    inset
                                    vertical></v-divider>
@@ -86,10 +86,10 @@
 
 <script>
     export default {
-        name: "category-component",
+        name: "order-component",
         data() {
             return {
-                categories: [],
+                orders: [],
                 modelstate: {},
                 dialog: false,
                 headers: [
@@ -132,22 +132,22 @@
         methods: {
             search: function () {
                 let self = this;
-                this.$axios.get('/category/search')
+                this.$axios.get('/order/search')
                     .then(function (response) {
-                        self.categories = response.data.content
+                        self.orders = response.data.content
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
             },
             editItem(item) {
-                this.editedIndex = this.categories.indexOf(item)
+                this.editedIndex = this.orders.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
 
             deleteItem(item) {
-                const index = this.categories.indexOf(item)
+                const index = this.orders.indexOf(item)
                 confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1)
             },
 
@@ -165,12 +165,12 @@
                 if (this.editedIndex > -1) {
                     this.$axios({
                         method: 'post',
-                        url: '/category/edit',
+                        url: '/order/edit',
                         headers: { 'Content-Type': 'application/json' },
                         data: JSON.stringify(self.editedItem)
                     }).then((response) => {
                         if (!response.data.result.isError) {
-                            Object.assign(self.categories[self.editedIndex], response.data.result.content)
+                            Object.assign(self.orders[self.editedIndex], response.data.result.content)
                             self.close();
                         }
                     }, (error) => {
@@ -181,12 +181,12 @@
                 } else {
                     this.$axios({
                         method: 'post',
-                        url: '/category/Add',
+                        url: '/order/Add',
                         headers: { 'Content-Type': 'application/json' },
                         data: JSON.stringify(self.editedItem)
                     }).then((response) => {
                         if (!response.data.result.isError) {
-                            self.categories.push(response.data.result.content)
+                            self.orders.push(response.data.result.content)
                             self.close();
                         }
                     }, (error) => {
