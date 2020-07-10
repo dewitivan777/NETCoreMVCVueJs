@@ -63,7 +63,7 @@
                                                           item-text="name"
                                                           item-value="id"
                                                           :error-messages="modelstate['SupplierId']"
-                                                          label="SupplierId"></v-select>
+                                                          label="Supplier"></v-select>
                                             </v-col>
                                             <v-col cols="12" sm="12" md="6">
                                                 <v-select v-model="editedItem.categoryId"
@@ -71,23 +71,23 @@
                                                           item-text="name"
                                                           item-value="id"
                                                           :error-messages="modelstate['CategoryId']"
-                                                          label="CategoryId"></v-select>
+                                                          label="Category"></v-select>
                                             </v-col>
 
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.quantityPerUnit" type="number" label="QuantityPerUnit" :error-messages="modelstate['QuantityPerUnit']"></v-text-field>
+                                                <v-text-field v-model="editedItem.quantityPerUnit" type="number" label="Quantity Per Unit" :error-messages="modelstate['QuantityPerUnit']"></v-text-field>
                                             </v-col>
 
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field prefix="R" v-model="editedItem.unitPrice" type="number" label="UnitPrice" :error-messages="modelstate['UnitPrice']"></v-text-field>
+                                                <v-text-field prefix="ZAR" @keypress="currencyValidate" v-model="editedItem.unitPrice" type="number" label="Unit Price" :error-messages="modelstate['UnitPrice']"></v-text-field>
                                             </v-col>
 
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.unitsInStock" type="number" label="UnitsInStock" :error-messages="modelstate['UnitsInStock']"></v-text-field>
+                                                <v-text-field v-model="editedItem.unitsInStock" type="number" label="Units In Stock" :error-messages="modelstate['UnitsInStock']"></v-text-field>
                                             </v-col>
 
                                             <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.reorderLevel" type="number" label="ReorderLevel" :error-messages="modelstate['ReorderLevel']"></v-text-field>
+                                                <v-text-field v-model="editedItem.reorderLevel" type="number" label="Reorder Level" :error-messages="modelstate['ReorderLevel']"></v-text-field>
                                             </v-col>
 
                                             <v-col cols="12" sm="12" md="12">
@@ -207,6 +207,20 @@
             },
         },
         methods: {
+            currencyValidate($event) {
+                // console.log($event.keyCode); //keyCodes value
+                let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+
+                // only allow number and one dot
+                if ((keyCode < 48 || keyCode > 57) && (keyCode !== 46 || this.unitPrice.indexOf('.') != -1)) { // 46 is dot
+                    $event.preventDefault();
+                }
+
+                // restrict to 2 decimal places
+                if (this.unitPrice != null && this.unitPrice.indexOf(".") > -1 && (this.unitPrice.split('.')[1].length > 1)) {
+                    $event.preventDefault();
+                }
+            },
             customFilter(items, filters, filter, headers) {
                 // Init the filter class.
                 const cf = new this.$MultiFilters(items, filters, filter, headers);
@@ -313,12 +327,22 @@
             save() {
                 let self = this;
                 self.modelstate = {}
+
+                var formData = new FormData();
+
+                $.each(self.editedItem, function (key, value) {
+                    formData.append(key, value);
+                })
+
                 if (this.editedIndex > -1) {
                     this.$axios({
                         method: 'post',
                         url: '/product/edit',
-                        headers: { 'Content-Type': 'application/json' },
-                        data: JSON.stringify(self.editedItem)
+                        headers: {
+                            'content-type': 'multipart/form-data',
+                            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+                        },
+                        data: formData
                     }).then((response) => {
                         if (!response.data.result.isError) {
                             Object.assign(self.products[self.editedIndex], response.data.result.content)
@@ -331,11 +355,15 @@
                     });
                 } else {
                     console.log(JSON.stringify(self.editedItem));
+                    console.log(formData);
                     this.$axios({
                         method: 'post',
                         url: '/product/Add',
-                        headers: { 'Content-Type': 'application/json' },
-                        data: JSON.stringify(self.editedItem)
+                        headers: {
+                            'content-type': 'multipart/form-data',
+                            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+                        },
+                        data: formData
                     }).then((response) => {
                         if (!response.data.result.isError) {
                             self.products.push(response.data.result.content)

@@ -35,7 +35,7 @@ namespace eBlocksWeb.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] Product product)
+        public async Task<IActionResult> Add([FromForm] Product product)
         {
             if (!ModelState.IsValid)
             {
@@ -48,7 +48,7 @@ namespace eBlocksWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromBody] Product product)
+        public async Task<IActionResult> Edit([FromForm] Product product)
         {
             if (!ModelState.IsValid)
             {
