@@ -13,11 +13,14 @@ namespace eBlocksWeb.Models
         public string CategoryId { get; set; }
         [Required]
         public int QuantityPerUnit { get; set; } = 0;
-        [Required]
+        [RegularExpression(@"^\d+\.\d{0,2}$", ErrorMessage ="Maximum two Decimal Points allowed")]
+        [Range(0, 9999999999999999.99, ErrorMessage ="Invalid Input")]
         public decimal UnitPrice { get; set; } = 0;
         [Required]
+        [Range(0, 9999999999999999, ErrorMessage = "Invalid Input")]
         public int UnitsInStock { get; set; } = 0;
         [Required]
+        [Range(0, 9999999999999999, ErrorMessage = "Invalid Input")]
         public int ReorderLevel { get; set; } = 0;
         public bool Discontinued { get; set; }
     }

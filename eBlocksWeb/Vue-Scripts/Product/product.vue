@@ -1,140 +1,182 @@
 ﻿<template>
     <div id="product">
         <v-app id="inspire">
-            <v-row>
-                <v-col cols="12" sm="6" md="4">
+            <v-layout row wrap>
+                <v-col cols="12" sm="12" md="12">
                     <v-text-field append-icon="search"
                                   label="Filter"
                                   single-line
                                   hide-details
                                   @input="filterSearch"></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
+                <v-col cols="12" sm="12" md="6">
                     <v-select :items="categories"
                               item-text="name"
                               item-value="id"
                               label="Categories"
                               @change="filterCategories"></v-select>
                 </v-col>
-                <v-col cols="12" sm="6" md="4">
+                <v-col cols="12" sm="12" md="6">
                     <v-select :items="suppliers"
                               item-text="name"
                               item-value="id"
                               label="Suppliers"
                               @change="filterSuppliers"></v-select>
                 </v-col>
-            </v-row>
 
-            <v-data-table :headers="headers"
-                          :items="products"
-                          sort-by="name"
-                          :search="filters"
-                          :custom-filter="customFilter"
-                          class="elevation-1">
-                <template v-slot:top>
-                    <v-toolbar flat color="white">
-                        <v-toolbar-title>Products</v-toolbar-title>
-                        <v-divider class="mx-4"
-                                   inset
-                                   vertical></v-divider>
-                        <v-spacer></v-spacer>
-                        <v-dialog v-model="dialog" max-width="500px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn color="primary"
-                                       dark
-                                       class="mb-2"
-                                       v-bind="attrs"
-                                       v-on="on">New Item</v-btn>
-                            </template>
-                            <v-card>
-                                <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
-                                </v-card-title>
+                <v-col cols="12" sm="12" md="12">
+                    <v-data-table :headers="headers"
+                                  :items="products"
+                                  sort-by="name"
+                                  :search="filters"
+                                  :custom-filter="customFilter"
+                                  class="elevation-1">
+                        <template v-slot:top>
+                            <v-toolbar flat color="white">
+                                <v-toolbar-title>Products</v-toolbar-title>
+                                <v-divider class="mx-4"
+                                           inset
+                                           vertical></v-divider>
+                                <v-spacer></v-spacer>
+                                <v-dialog v-model="dialog" max-width="500px">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn color="primary"
+                                               dark
+                                               class="mb-2"
+                                               v-bind="attrs"
+                                               v-on="on">New Item</v-btn>
+                                    </template>
+                                    <v-card>
+                                        <v-card-title>
+                                            <span class="headline">{{ formTitle }}</span>
+                                        </v-card-title>
 
-                                <v-card-text>
-                                    <v-container>
-                                        <v-row>
-                                            <v-col cols="12" sm="12" md="12">
-                                                <v-text-field v-model="editedItem.name" label="Name" :error-messages="modelstate['Name']"></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12" sm="12" md="6">
-                                                <v-select v-model="editedItem.supplierId"
-                                                          :items="suppliers"
-                                                          item-text="name"
-                                                          item-value="id"
-                                                          :error-messages="modelstate['SupplierId']"
-                                                          label="Supplier"></v-select>
-                                            </v-col>
-                                            <v-col cols="12" sm="12" md="6">
-                                                <v-select v-model="editedItem.categoryId"
-                                                          :items="categories"
-                                                          item-text="name"
-                                                          item-value="id"
-                                                          :error-messages="modelstate['CategoryId']"
-                                                          label="Category"></v-select>
-                                            </v-col>
+                                        <v-card-text>
+                                            <v-container>
+                                                <v-row>
+                                                    <v-col cols="12" sm="12" md="12">
+                                                        <v-text-field v-model="editedItem.name" label="Name" :error-messages="modelstate['Name']"></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="12" md="6">
+                                                        <v-select v-model="editedItem.supplierId"
+                                                                  :items="suppliers"
+                                                                  item-text="name"
+                                                                  item-value="id"
+                                                                  :error-messages="modelstate['SupplierId']"
+                                                                  label="Supplier"></v-select>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="12" md="6">
+                                                        <v-select v-model="editedItem.categoryId"
+                                                                  :items="categories"
+                                                                  item-text="name"
+                                                                  item-value="id"
+                                                                  :error-messages="modelstate['CategoryId']"
+                                                                  label="Category"></v-select>
+                                                    </v-col>
 
-                                            <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.quantityPerUnit" type="number" label="Quantity Per Unit" :error-messages="modelstate['QuantityPerUnit']"></v-text-field>
-                                            </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.quantityPerUnit" type="number" label="Quantity Per Unit" :error-messages="modelstate['QuantityPerUnit']"></v-text-field>
+                                                    </v-col>
 
-                                            <v-col cols="12" sm="6" md="4">
-                                                <v-text-field prefix="ZAR" @keypress="currencyValidate" v-model="editedItem.unitPrice" type="number" label="Unit Price" :error-messages="modelstate['UnitPrice']"></v-text-field>
-                                            </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field prefix="ZAR" v-model="editedItem.unitPrice" type="number" label="Unit Price" :error-messages="modelstate['UnitPrice']"></v-text-field>
+                                                    </v-col>
 
-                                            <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.unitsInStock" type="number" label="Units In Stock" :error-messages="modelstate['UnitsInStock']"></v-text-field>
-                                            </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.unitsInStock" type="number" label="Units In Stock" :error-messages="modelstate['UnitsInStock']"></v-text-field>
+                                                    </v-col>
 
-                                            <v-col cols="12" sm="6" md="4">
-                                                <v-text-field v-model="editedItem.reorderLevel" type="number" label="Reorder Level" :error-messages="modelstate['ReorderLevel']"></v-text-field>
-                                            </v-col>
+                                                    <v-col cols="12" sm="6" md="4">
+                                                        <v-text-field v-model="editedItem.reorderLevel" type="number" label="Reorder Level" :error-messages="modelstate['ReorderLevel']"></v-text-field>
+                                                    </v-col>
 
-                                            <v-col cols="12" sm="12" md="12">
-                                                <v-checkbox v-model="editedItem.discontinued"
-                                                            label="Discontinued"></v-checkbox>
-                                            </v-col>
+                                                    <v-col cols="12" sm="12" md="12">
+                                                        <v-checkbox v-model="editedItem.discontinued"
+                                                                    label="Discontinued"></v-checkbox>
+                                                    </v-col>
 
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card-text>
 
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-toolbar>
-                </template>
-                <template v-slot:item.imageUrl="{ item }">
-                    <div v-if="item.imageUrl">
-                        <v-avatar>
-                            <img :src="item.imageUrl" :alt="item.name">
-                        </v-avatar>
-                    </div>
-                    <div v-else>
-                        <v-avatar color="indigo">
-                            <v-icon dark>mdi-signature-image</v-icon>
-                        </v-avatar>
-                    </div>
-                </template>
-                <template v-slot:item.actions="{ item }">
-                    <v-icon small
-                            class="mr-2"
-                            @click="editItem(item)">
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon small
-                            @click="deleteItem(item)">
-                        mdi-delete
-                    </v-icon>
-                </template>
-                <template v-slot:no-data>
-                    <v-btn color="primary" @click="search">Reset</v-btn>
-                </template>
-            </v-data-table>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                                            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                            </v-toolbar>
+                        </template>
+
+                        <template v-slot:item.indicators="{ item }">
+                            <v-row justify="space-around">
+
+                                <div v-if="!item.discontinued">
+
+                                    <v-tooltip left>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="green" v-on="on" dark>mdi-lock-open</v-icon>
+                                        </template>
+                                        <span>Product still available</span>
+                                    </v-tooltip>
+
+                                </div>
+                                <div v-else>
+                                    <v-tooltip left>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="red" v-on="on" dark>mdi-lock</v-icon>
+                                        </template>
+                                        <span>Product is not available</span>
+                                    </v-tooltip>
+                                </div>
+
+                                <div v-if="item.unitsInStock > item.reorderLevel">
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="green" v-on="on" dark>mdi-store</v-icon>
+                                        </template>
+                                        <span>Stock still good</span>
+                                    </v-tooltip>
+                                </div>
+                                <div v-else-if="item.unitsInStock == item.reorderLevel">
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="orange" v-on="on" dark>mdi-store</v-icon>
+                                        </template>
+                                        <span>Stock is low</span>
+                                    </v-tooltip>
+                                </div>
+                                <div v-else>
+                                    <v-tooltip bottom>
+                                        <template v-slot:activator="{ on }">
+                                            <v-icon color="red" v-on="on" dark>mdi-store</v-icon>
+                                        </template>
+                                        <span>Stock is very low</span>
+                                    </v-tooltip>
+                                </div>
+
+                            </v-row>
+                        </template>
+
+
+                        <template v-slot:item.actions="{ item }">
+                            <v-icon small
+                                    class="mr-2"
+                                    @click="editItem(item)">
+                                mdi-pencil
+                            </v-icon>
+                            <v-icon small
+                                    @click="deleteItem(item)">
+                                mdi-delete
+                            </v-icon>
+                        </template>
+                        <template v-slot:no-data>
+                            <v-btn color="primary" @click="search">Reset</v-btn>
+                        </template>
+                    </v-data-table>
+                </v-col>
+            </v-layout>
         </v-app>
     </div>
 
@@ -157,6 +199,7 @@
                 modelstate: {},
                 dialog: false,
                 headers: [
+                    { text: 'Indicators', value: 'indicators', sortable: false },
                     {
                         text: 'Id',
                         align: 'start',
@@ -207,20 +250,6 @@
             },
         },
         methods: {
-            currencyValidate($event) {
-                // console.log($event.keyCode); //keyCodes value
-                let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-
-                // only allow number and one dot
-                if ((keyCode < 48 || keyCode > 57) && (keyCode !== 46 || this.unitPrice.indexOf('.') != -1)) { // 46 is dot
-                    $event.preventDefault();
-                }
-
-                // restrict to 2 decimal places
-                if (this.unitPrice != null && this.unitPrice.indexOf(".") > -1 && (this.unitPrice.split('.')[1].length > 1)) {
-                    $event.preventDefault();
-                }
-            },
             customFilter(items, filters, filter, headers) {
                 // Init the filter class.
                 const cf = new this.$MultiFilters(items, filters, filter, headers);
@@ -329,7 +358,6 @@
                 self.modelstate = {}
 
                 var formData = new FormData();
-
                 $.each(self.editedItem, function (key, value) {
                     formData.append(key, value);
                 })
@@ -340,7 +368,6 @@
                         url: '/product/edit',
                         headers: {
                             'content-type': 'multipart/form-data',
-                            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
                         },
                         data: formData
                     }).then((response) => {
@@ -361,7 +388,6 @@
                         url: '/product/Add',
                         headers: {
                             'content-type': 'multipart/form-data',
-                            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
                         },
                         data: formData
                     }).then((response) => {
