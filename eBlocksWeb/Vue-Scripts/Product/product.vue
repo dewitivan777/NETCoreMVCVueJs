@@ -113,19 +113,21 @@
                             <v-row justify="space-around">
 
                                 <div v-if="!item.discontinued">
-
                                     <v-tooltip left>
                                         <template v-slot:activator="{ on }">
-                                            <v-icon color="green" v-on="on" dark>mdi-lock-open</v-icon>
+                                            <v-avatar size="32" color="green" v-on="on">
+                                                <v-icon dark>mdi-lock-open</v-icon>
+                                            </v-avatar>
                                         </template>
                                         <span>Product still available</span>
                                     </v-tooltip>
-
                                 </div>
                                 <div v-else>
                                     <v-tooltip left>
                                         <template v-slot:activator="{ on }">
-                                            <v-icon color="red" v-on="on" dark>mdi-lock</v-icon>
+                                            <v-avatar size="32" color="red" v-on="on">
+                                                <v-icon  dark>mdi-lock</v-icon>
+                                            </v-avatar>
                                         </template>
                                         <span>Product is not available</span>
                                     </v-tooltip>
@@ -134,7 +136,9 @@
                                 <div v-if="item.unitsInStock > item.reorderLevel">
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on }">
-                                            <v-icon color="green" v-on="on" dark>mdi-store</v-icon>
+                                            <v-avatar size="32" color="green" v-on="on">
+                                                <v-icon  dark>mdi-store</v-icon>
+                                            </v-avatar>
                                         </template>
                                         <span>Stock still good</span>
                                     </v-tooltip>
@@ -142,7 +146,9 @@
                                 <div v-else-if="item.unitsInStock == item.reorderLevel">
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on }">
-                                            <v-icon color="orange" v-on="on" dark>mdi-store</v-icon>
+                                            <v-avatar size="32" color="orange" v-on="on">
+                                                <v-icon  dark>mdi-store</v-icon>
+                                            </v-avatar>
                                         </template>
                                         <span>Stock is low</span>
                                     </v-tooltip>
@@ -150,7 +156,9 @@
                                 <div v-else>
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on }">
-                                            <v-icon color="red" v-on="on" dark>mdi-store</v-icon>
+                                            <v-avatar size="32" color="red" v-on="on">
+                                                <v-icon dark>mdi-store</v-icon>
+                                            </v-avatar>
                                         </template>
                                         <span>Stock is very low</span>
                                     </v-tooltip>
@@ -308,7 +316,9 @@
                 let self = this;
                 this.$axios.get('/product/search')
                     .then(function (response) {
-                        self.products = response.data.content
+                        if (response.data.content != null) {
+                            self.products = response.data.content
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -318,7 +328,9 @@
                 let self = this;
                 this.$axios.get('/category/search')
                     .then(function (response) {
-                        self.categories = response.data.content
+                        if (response.data.content != null) {
+                            self.categories = response.data.content
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -328,7 +340,9 @@
                 let self = this;
                 this.$axios.get('/supplier/search')
                     .then(function (response) {
-                        self.suppliers = response.data.content
+                        if (response.data.content != null) {
+                            self.suppliers = response.data.content
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);

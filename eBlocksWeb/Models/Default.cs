@@ -16,5 +16,10 @@ namespace eBlocksWeb.Models
         {
             return "/service/ProductService/" + typeName.ToLower();
         }
+
+        public static string GetOrderEndpoint(string typeName)
+        {
+            return "/service/OrderService/" + typeName.ToLower();
+        }
     }
 }

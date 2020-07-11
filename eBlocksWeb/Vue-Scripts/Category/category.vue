@@ -134,7 +134,9 @@
                 let self = this;
                 this.$axios.get('/category/search')
                     .then(function (response) {
-                        self.categories = response.data.content
+                        if (response.data.content != null) {
+                            self.categories = response.data.content
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);

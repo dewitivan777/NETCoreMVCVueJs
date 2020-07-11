@@ -173,7 +173,9 @@
                 this.$axios.get('/supplier/search')
                     .then(function (response) {
                         console.log(response.data.content);
-                        self.suppliers = response.data.content
+                        if (response.data.content != null) {
+                            self.suppliers = response.data.content
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);
