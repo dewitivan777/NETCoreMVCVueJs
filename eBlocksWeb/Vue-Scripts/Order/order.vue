@@ -74,7 +74,7 @@
                                 <v-card-text>
                                     <v-container>
                                         <v-row>
-                                            <div v-if="">
+                                            <div v-if="editedItem.state == 'Completed'">
 
                                             </div>
                                             <div v-else>

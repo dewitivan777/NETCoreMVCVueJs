@@ -1,5 +1,3 @@
-using System;
-
 namespace eBlocksWeb.Models
 {
     public class ErrorViewModel
