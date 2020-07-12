@@ -23,7 +23,7 @@ namespace eBlocksWeb.Models
         public string Country { get; set; }
         public string Phone { get; set; }
         public string Fax { get; set; }
-        [RegularExpression("^http(s)?://([\\w-]+.)+[\\w-]+(/[\\w- ./?%&=])?$",ErrorMessage ="Invalid format")]
+        [Url]
         public string Website { get; set; }
     }
 }
