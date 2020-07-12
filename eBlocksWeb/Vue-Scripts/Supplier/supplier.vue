@@ -221,7 +221,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         data: JSON.stringify(self.editedItem)
                     }).then((response) => {
-                        Object.assign(self.supplier[self.editedIndex], response.data.result.content)
+                        Object.assign(self.suppliers[self.editedIndex], response.data.result.content)
                         self.close();
                     }, (error) => {
                         if (error.response.status == 400) {
