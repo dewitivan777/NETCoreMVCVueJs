@@ -11,7 +11,6 @@ namespace eBlocksWeb.Controllers
         private readonly ICommandHandler<Category> _commandHandler;
         private readonly IQueryHandler<Category> _queryHandler;
 
-
         public CategoryController(ICommandHandler<Category> CategoryCommandHandler, IQueryHandler<Category> CategoryQueryHandler)
         {
             _commandHandler = CategoryCommandHandler;
@@ -30,12 +29,9 @@ namespace eBlocksWeb.Controllers
             return Json(new { result.Content });
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] Category category)
         {
-            var success = false;
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetModelStateErrors());
@@ -49,8 +45,6 @@ namespace eBlocksWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromBody] Category category)
         {
-            var success = false;
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetModelStateErrors());

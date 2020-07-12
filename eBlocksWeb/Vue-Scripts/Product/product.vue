@@ -126,7 +126,7 @@
                                     <v-tooltip left>
                                         <template v-slot:activator="{ on }">
                                             <v-avatar size="32" color="red" v-on="on">
-                                                <v-icon  dark>mdi-lock</v-icon>
+                                                <v-icon dark>mdi-lock</v-icon>
                                             </v-avatar>
                                         </template>
                                         <span>Product is not available</span>
@@ -137,7 +137,7 @@
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on }">
                                             <v-avatar size="32" color="green" v-on="on">
-                                                <v-icon  dark>mdi-store</v-icon>
+                                                <v-icon dark>mdi-store</v-icon>
                                             </v-avatar>
                                         </template>
                                         <span>Stock still good</span>
@@ -147,7 +147,7 @@
                                     <v-tooltip bottom>
                                         <template v-slot:activator="{ on }">
                                             <v-avatar size="32" color="orange" v-on="on">
-                                                <v-icon  dark>mdi-store</v-icon>
+                                                <v-icon dark>mdi-store</v-icon>
                                             </v-avatar>
                                         </template>
                                         <span>Stock is low</span>
@@ -202,8 +202,28 @@
                     supplier: '',
                 },
                 products: [],
+                allProducts:[],
                 categories: [],
                 suppliers: [],
+                defaultCategory: {
+                    id: '',
+                    name: '',
+                    description: '',
+                    imageUrl: '',
+                },
+                defaultSupplier: {
+                    id: '',
+                    name: '',
+                    contactName: '',
+                    contactTitle: '',
+                    address: '',
+                    city: '',
+                    postalCode: '',
+                    country: '',
+                    phone: '',
+                    fax: '',
+                    website: '',
+                },
                 modelstate: {},
                 dialog: false,
                 headers: [
@@ -259,11 +279,16 @@
         },
         methods: {
             customFilter(items, filters, filter, headers) {
+                console.log("customFilter");
                 // Init the filter class.
                 const cf = new this.$MultiFilters(items, filters, filter, headers);
 
+                var searchItems = [];
+                var categoryItems = [];
+                var supplierItems = [];
+
                 cf.registerFilter('search', function (searchWord, items) {
-                    if (searchWord.trim() === '') return items;
+                    if (searchWord.trim() == '') return items;
 
                     return items.filter(item => {
                         return item.name.toLowerCase().includes(searchWord.toLowerCase());
@@ -272,7 +297,7 @@
                 });
 
                 cf.registerFilter('category', function (name, items) {
-                    if (name.trim() === '') return items;
+                    if (name.trim() == '') return items;
 
                     return items.filter(item => {
                         return item.categoryId.toLowerCase() === name.toLowerCase();
@@ -281,7 +306,7 @@
                 });
 
                 cf.registerFilter('supplier', function (name, items) {
-                    if (name.trim() === '') return items;
+                    if (name.trim() == '') return items;
 
                     return items.filter(item => {
                         return item.supplierId.toLowerCase() === name.toLowerCase();
@@ -291,13 +316,15 @@
 
                 // Its time to run all created filters.
                 // Will be executed in the order thay were defined.
-                return cf.runFilters();
+                this.products = cf.runFilters();
             },
             /**
    * Handler when user input something at the "Filter" text field.
    */
             filterSearch(val) {
                 this.filters = this.$MultiFilters.updateFilters(this.filters, { search: val });
+
+                this.customFilter(this.allProducts, this.filters, val, this.headers);
             },
 
             /**
@@ -305,19 +332,25 @@
              */
             filterCategories(val) {
                 this.filters = this.$MultiFilters.updateFilters(this.filters, { category: val });
+
+                this.customFilter(this.allProducts, this.filters, val, this.headers);
             },
             /**
        * Handler when user  select some supplier at the "Suppliers" select.
        */
             filterSuppliers(val) {
                 this.filters = this.$MultiFilters.updateFilters(this.filters, { supplier: val });
+
+                this.customFilter(this.allProducts, this.filters, val, this.headers);
             },
             search: function () {
                 let self = this;
                 this.$axios.get('/product/search')
                     .then(function (response) {
                         if (response.data.content != null) {
-                            self.products = response.data.content
+                            self.products = response.data.content;
+
+                            self.allProducts = self.products;
                         }
                     })
                     .catch(function (error) {
@@ -330,6 +363,9 @@
                     .then(function (response) {
                         if (response.data.content != null) {
                             self.categories = response.data.content
+                            self.categories.push(self.defaultCategory);
+
+                            self.categories = self.categories.sort((a, b) => (a.name > b.name) ? 1 : -1);
                         }
                     })
                     .catch(function (error) {
@@ -342,6 +378,9 @@
                     .then(function (response) {
                         if (response.data.content != null) {
                             self.suppliers = response.data.content
+                            self.suppliers.push(self.defaultSupplier);
+
+                            self.suppliers = self.suppliers.sort((a, b) => (a.name > b.name) ? 1 : -1);
                         }
                     })
                     .catch(function (error) {
@@ -395,8 +434,6 @@
                         }
                     });
                 } else {
-                    console.log(JSON.stringify(self.editedItem));
-                    console.log(formData);
                     this.$axios({
                         method: 'post',
                         url: '/product/Add',

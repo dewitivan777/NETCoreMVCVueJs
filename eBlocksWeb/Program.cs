@@ -23,5 +23,6 @@ namespace eBlocksWeb
                     webBuilder
                      .UseStartup<Startup>()
                      .UseUrls("http://*:50080");
-                });    }
+                });
+    }
 }

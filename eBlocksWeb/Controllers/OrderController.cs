@@ -11,7 +11,6 @@ namespace eBlocksWeb.Controllers
         private readonly ICommandHandler<Order> _commandHandler;
         private readonly IQueryHandler<Order> _queryHandler;
 
-
         public OrderController(ICommandHandler<Order> OrderCommandHandler, IQueryHandler<Order> OrderQueryHandler)
         {
             _commandHandler = OrderCommandHandler;
@@ -29,7 +28,6 @@ namespace eBlocksWeb.Controllers
 
             return Json(new { result.Content });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] Order order)

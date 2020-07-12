@@ -11,7 +11,6 @@ namespace eBlocksWeb.Controllers
         private readonly ICommandHandler<Supplier> _commandHandler;
         private readonly IQueryHandler<Supplier> _queryHandler;
 
-
         public SupplierController(ICommandHandler<Supplier> SupplierCommandHandler, IQueryHandler<Supplier> SupplierQueryHandler)
         {
             _commandHandler = SupplierCommandHandler;
@@ -29,7 +28,6 @@ namespace eBlocksWeb.Controllers
 
             return Json(new { result.Content });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] Supplier supplier)

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using eBlocksWeb.Models.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace eBlocksWeb.Models
 {
@@ -13,7 +14,7 @@ namespace eBlocksWeb.Models
         public string CategoryId { get; set; }
         [Required]
         public int QuantityPerUnit { get; set; } = 0;
-        [RegularExpression(@"^\d+\.\d{0,2}$", ErrorMessage = "Maximum two Decimal Points allowed")]
+        [DecimalPrecision(2)]
         [Range(0, 9999999999999999.99, ErrorMessage ="Invalid Input")]
         public decimal UnitPrice { get; set; } = 0;
         [Required]

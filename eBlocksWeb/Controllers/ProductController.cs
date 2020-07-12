@@ -11,7 +11,6 @@ namespace eBlocksWeb.Controllers
         private readonly ICommandHandler<Product> _commandHandler;
         private readonly IQueryHandler<Product> _queryHandler;
 
-
         public ProductController(ICommandHandler<Product> ProductCommandHandler, IQueryHandler<Product> ProductQueryHandler)
         {
             _commandHandler = ProductCommandHandler;
@@ -29,7 +28,6 @@ namespace eBlocksWeb.Controllers
 
             return Json(new { result.Content });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] Product product)

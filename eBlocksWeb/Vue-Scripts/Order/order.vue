@@ -12,8 +12,9 @@
                                    inset
                                    vertical></v-divider>
                         <v-spacer></v-spacer>
+
                         <!--Create Dialog-->
-                        <v-dialog v-model="createDialog" max-width="500px">
+                        <v-dialog v-model="dialog" max-width="500px">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-btn color="primary"
                                        dark
@@ -40,8 +41,7 @@
                                                           label="Product"></v-select>
                                             </v-col>
                                             <v-col cols="12" sm="12" md="12">
-                                                <p>   Unit Price: R{{ editedItem.unitPrice }} </p>
-
+                                                <p>Unit Price: R{{ editedItem.unitPrice }} </p>
                                             </v-col>
                                             <v-col cols="12" sm="6" md="6">
                                                 <v-text-field v-model="editedItem.quantity" type="number" min="0" label="Quantity" :error-messages="modelstate['Quantity']"></v-text-field>
@@ -58,36 +58,102 @@
 
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="closeCreate">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                                     <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
 
-                        <!--Edit Dialog-->
-                        <v-dialog v-model="editDialog" max-width="500px">
+                        <!--Edit Dialog
+    <v-dialog v-model="editDialog" max-width="500px">
+        <v-card>
+            <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+
+            <v-card-text>
+                <v-container>
+                    <v-row>
+                        <div v-if="editedItem.state == 'Processing'">
+                            <v-col cols="12" sm="12" md="12">
+                                <v-select v-model="selectedProduct"
+                                          :items="products"
+                                          return-object
+                                          item-text="name"
+                                          :search-input.sync="searchProduct"
+                                          :error-messages="modelstate['ProductId']"
+                                          autocomplete
+                                          label="Product"></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="12">
+                                <p>Unit Price: R{{ editedItem.unitPrice }} </p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field v-model="editedItem.quantity" type="number" min="0" label="Quantity" :error-messages="modelstate['Quantity']"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field prefix="ZAR" v-model="editedItem.discount" min="0" type="number" label="Discount" :error-messages="modelstate['Discount']"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="12" md="12">
+                                <h3>Total : R{{ computedTotal }}</h3>
+                            </v-col>
+                        </div>
+                        <div v-else>
+                            <p>Edit is not allowed for orders with state: {{editedItem.state}}</p>
+                        </div>
+                    </v-row>
+                </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeEdit">Cancel</v-btn>
+                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>-->
+                        <!--Complete Dialog-->
+                        <v-dialog v-model="completeDialog" max-width="500px">
                             <v-card>
                                 <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
+                                    <span class="headline">Complete Order</span>
                                 </v-card-title>
 
                                 <v-card-text>
                                     <v-container>
                                         <v-row>
-                                            <div v-if="editedItem.state == 'Completed'">
-
-                                            </div>
-                                            <div v-else>
-
-                                            </div>
+                                            <p>Was order Completed successfully?</p>
                                         </v-row>
                                     </v-container>
                                 </v-card-text>
 
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="closeEdit">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                                    <v-btn color="blue darken-1" text @click="closeComplete">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" text @click="completeOrder">Yes</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+
+                        <!--Cancel Dialog-->
+                        <v-dialog v-model="cancelDialog" max-width="500px">
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">Are you sure?</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <p>Are you sure you want to Cancel this Order?</p>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="closeCancel">Cancel</v-btn>
+                                    <v-btn color="blue darken-1" text @click="cancelOrder">Yes</v-btn>
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
@@ -107,7 +173,7 @@
                                 <span>Order Completed</span>
                             </v-tooltip>
                         </div>
-                        <div v-if="item.state == 'Processing'">
+                        <div v-else-if="item.state == 'Processing'">
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
                                     <v-avatar size="32" color="orange" v-on="on">
@@ -130,11 +196,40 @@
                 </template>
 
                 <template v-slot:item.actions="{ item }">
-                    <v-icon small
-                            class="mr-2"
-                            @click="editItem(item)">
-                        mdi-pencil
-                    </v-icon>
+                    <div v-if="item.state=='Processing'">
+                        <v-row justify="space-around">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small v-on="on"
+                                            @click="editItem(item)">
+                                        mdi-pencil
+                                    </v-icon>
+                                </template>
+                                <span>Edit Order</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small color="green" v-on="on"
+                                            @click="completeItem(item)">
+                                        mdi-transfer-right
+                                    </v-icon>
+                                </template>
+                                <span>Complete Order</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small color="red" v-on="on"
+                                            @click="cancelItem(item)">
+                                        mdi-transfer-left
+                                    </v-icon>
+                                </template>
+                                <span>Cancel Order</span>
+                            </v-tooltip>
+                        </v-row>
+                    </div>
+                    <div v-else color="grey">
+
+                    </div>
                 </template>
                 <template v-slot:no-data>
                     <v-btn color="primary" @click="search">Reset</v-btn>
@@ -189,25 +284,25 @@
                 editedIndex: -1,
                 editedItem: {
                     id: '',
-                    createdDate: '',
-                    updateDate: '',
+                    createdDate: '0001-01-01',
+                    updateDate: '0001-01-01',
                     productId: '',
                     unitPrice: 0,
                     quantity: 0,
                     discount: 0,
                     price: 0,
-                    State: '',
+                    state: '',
                 },
                 defaultItem: {
                     id: '',
-                    createdDate: '',
-                    updateDate: '',
+                    createdDate: '0001-01-01',
+                    updateDate: '0001-01-01',
                     productId: '',
                     unitPrice: 0,
                     quantity: 0,
                     discount: 0,
                     price: 0,
-                    State: '',
+                    state: '',
                 },
             }
         },
@@ -217,21 +312,33 @@
             },
             computedTotal() {
                 if (this.selectedProduct.id.length) {
-                    var total = (this.editedItem.unitPrice * this.editedItem.quantity) - this.editedItem.discount;
+                    var total = (this.editedItem.unitPrice * this.editedItem.quantity) - this.editedItem.discount
+                    if (total != undefined) {
+                        total = total.toFixed(2);
+                    }
                     return total;
                 }
             },
         },
         watch: {
-            createDialog(val) {
+            dialog(val) {
                 val
             },
-            editDialog(val) {
+            completeDialog(val) {
                 val
             },
+            cancelDialog(val) {
+                val
+            },
+
             selectedProduct: function (val) {
                 this.editedItem.unitPrice = val.unitPrice;
                 this.editedItem.productId = val.id;
+            },
+            computedTotal: function (val) {
+                console.log(val);
+                val = val.toFixed(2);
+                this.editedItem.price = val;
             }
         },
         methods: {
@@ -265,23 +372,41 @@
             editItem(item) {
                 this.editedIndex = this.orders.indexOf(item)
                 this.editedItem = Object.assign({}, item)
-                this.editDialog = true
+                this.selectedProduct = this.products.find(obj => {
+                    return obj.id === this.editedItem.productId;
+                });
+                this.dialog = true
             },
-
-            deleteItem(item) {
-                const index = this.orders.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1)
+            completeItem(item) {
+                this.editedIndex = this.orders.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                this.completeDialog = true
             },
-
-            closeEdit() {
-                this.editDialog = false;
+            cancelItem(item) {
+                this.editedIndex = this.orders.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                this.cancelDialog = true
+            },
+            close() {
+                this.dialog = false
                 this.$nextTick(() => {
                     this.editedItem = Object.assign({}, this.defaultItem)
                     this.editedIndex = -1
                 })
             },
-            closeCreate() {
-                this.createDialog = false;
+            closeComplete() {
+                this.completeDialog = false;
+                this.$nextTick(() => {
+                    this.editedItem = Object.assign({}, this.defaultItem)
+                    this.editedIndex = -1
+                })
+            },
+            closecancel() {
+                this.cancelDialog = false;
+                this.$nextTick(() => {
+                    this.editedItem = Object.assign({}, this.defaultItem)
+                    this.editedIndex = -1
+                })
             },
             save() {
                 let self = this;
@@ -299,12 +424,18 @@
                         headers: {
                             'content-type': 'multipart/form-data',
                         },
-                        data: JSON.stringify(self.editedItem)
+                        data: formData
                     }).then((response) => {
                         if (!response.data.result.isError) {
                             Object.assign(self.orders[self.editedIndex], response.data.result.content)
                             self.selectedProduct = self.products[0];
                             self.close();
+                        }
+                        else {
+                            if (response.data.result.httpStatusCode == "400") {
+                                var error = JSON.parse(response.data.result.error);
+                                self.modelstate = error;
+                            }
                         }
                     }, (error) => {
                         if (error.response.status == 400) {
@@ -318,7 +449,7 @@
                         headers: {
                             'content-type': 'multipart/form-data',
                         },
-                        data: JSON.stringify(self.editedItem)
+                        data: formData
                     }).then((response) => {
                         if (!response.data.result.isError) {
                             if (response.data.result.content) { }
@@ -326,13 +457,85 @@
                             self.selectedProduct = self.products[0];
                             self.close();
                         }
+                        else {
+                            if (response.data.result.httpStatusCode == "400") {
+                                var error = JSON.parse(response.data.result.error);
+                                self.modelstate = error;
+                            }
+                        }
                     }, (error) => {
                         if (error.response.status == 400) {
                             self.modelstate = error.response.data;
                         }
                     });
                 }
-            }
+            },
+            completeOrder() {
+                let self = this;
+                self.modelstate = {}
+
+                var formData = new FormData();
+
+                //Set state to complete
+                self.editedItem.state = "Completed";
+
+                $.each(self.editedItem, function (key, value) {
+                    formData.append(key, value);
+                })
+
+                this.$axios({
+                    method: 'post',
+                    url: '/order/edit',
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                    },
+                    data: formData
+                }).then((response) => {
+                    if (!response.data.result.isError) {
+                        if (response.data.result.content) { }
+                        Object.assign(self.orders[self.editedIndex], response.data.result.content)
+                        self.selectedProduct = self.products[0];
+                        self.closeComplete();
+                    }
+                }, (error) => {
+                    if (error.response.status == 400) {
+                        self.modelstate = error.response.data;
+                    }
+                });
+            },
+            cancelOrder() {
+                let self = this;
+                self.modelstate = {}
+
+                var formData = new FormData();
+
+                //Set state to canceled
+                self.editedItem.state = "Canceled";
+
+                $.each(self.editedItem, function (key, value) {
+                    formData.append(key, value);
+                })
+
+                this.$axios({
+                    method: 'post',
+                    url: '/order/edit',
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                    },
+                    data: formData
+                }).then((response) => {
+                    if (!response.data.result.isError) {
+                        if (response.data.result.content) { }
+                        Object.assign(self.orders[self.editedIndex], response.data.result.content)
+                        self.selectedProduct = self.products[0];
+                        self.closeCancel();;
+                    }
+                }, (error) => {
+                    if (error.response.status == 400) {
+                        self.modelstate = error.response.data;
+                    }
+                });
+            },
         },
         mounted() {
             this.getProducts();

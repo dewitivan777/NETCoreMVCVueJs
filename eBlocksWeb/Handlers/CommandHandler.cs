@@ -18,7 +18,6 @@ namespace eBlocksWeb.Handlers
             _client = client;
         }
 
-
         public async Task<IResponse<T>> DeleteAsync(
             string path,
             string id)
