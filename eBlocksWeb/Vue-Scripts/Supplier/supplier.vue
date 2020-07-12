@@ -181,7 +181,7 @@
                     });
             },
             editItem(item) {
-                this.editedIndex = this.supplier.indexOf(item)
+                this.editedIndex = this.suppliers.indexOf(item)
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
