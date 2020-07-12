@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using eBlocksWeb.Models.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace eBlocksWeb.Models
 {

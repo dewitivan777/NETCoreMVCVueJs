@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using eBlocksWeb.Models.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace eBlocksWeb.Models
 {
@@ -23,7 +24,6 @@ namespace eBlocksWeb.Models
         public string Country { get; set; }
         public string Phone { get; set; }
         public string Fax { get; set; }
-        [Url]
         public string Website { get; set; }
     }
 }
