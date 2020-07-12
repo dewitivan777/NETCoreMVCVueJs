@@ -64,54 +64,6 @@
                             </v-card>
                         </v-dialog>
 
-                        <!--Edit Dialog
-    <v-dialog v-model="editDialog" max-width="500px">
-        <v-card>
-            <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-                <v-container>
-                    <v-row>
-                        <div v-if="editedItem.state == 'Processing'">
-                            <v-col cols="12" sm="12" md="12">
-                                <v-select v-model="selectedProduct"
-                                          :items="products"
-                                          return-object
-                                          item-text="name"
-                                          :search-input.sync="searchProduct"
-                                          :error-messages="modelstate['ProductId']"
-                                          autocomplete
-                                          label="Product"></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <p>Unit Price: R{{ editedItem.unitPrice }} </p>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field v-model="editedItem.quantity" type="number" min="0" label="Quantity" :error-messages="modelstate['Quantity']"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field prefix="ZAR" v-model="editedItem.discount" min="0" type="number" label="Discount" :error-messages="modelstate['Discount']"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <h3>Total : R{{ computedTotal }}</h3>
-                            </v-col>
-                        </div>
-                        <div v-else>
-                            <p>Edit is not allowed for orders with state: {{editedItem.state}}</p>
-                        </div>
-                    </v-row>
-                </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeEdit">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>-->
                         <!--Complete Dialog-->
                         <v-dialog v-model="completeDialog" max-width="500px">
                             <v-card>

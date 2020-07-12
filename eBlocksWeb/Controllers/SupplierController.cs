@@ -9,11 +9,13 @@ namespace eBlocksWeb.Controllers
     public class SupplierController : Controller
     {
         private readonly ICommandHandler<Supplier> _commandHandler;
+        private readonly ICommandHandler<string> _deleteCommandHandler;
         private readonly IQueryHandler<Supplier> _queryHandler;
 
-        public SupplierController(ICommandHandler<Supplier> SupplierCommandHandler, IQueryHandler<Supplier> SupplierQueryHandler)
+        public SupplierController(ICommandHandler<Supplier> SupplierCommandHandler, ICommandHandler<string> deleteCommandHandler, IQueryHandler<Supplier> SupplierQueryHandler)
         {
             _commandHandler = SupplierCommandHandler;
+            _deleteCommandHandler = deleteCommandHandler;
             _queryHandler = SupplierQueryHandler;
         }
 
@@ -55,13 +57,15 @@ namespace eBlocksWeb.Controllers
             return Json(new { result });
         }
 
+        [HttpPost]
+        [Route("/supplier/delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var success = false;
 
             if (ModelState.IsValid)
             {
-                var result = await _commandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Supplier)), id);
+                var result = await _deleteCommandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Supplier)), id);
 
                 if (!result.IsError)
                 {

@@ -54,22 +54,5 @@ namespace eBlocksWeb.Controllers
 
             return Json(new { result });
         }
-
-        public async Task<IActionResult> Delete(string id)
-        {
-            var success = false;
-
-            if (ModelState.IsValid)
-            {
-                var result = await _commandHandler.DeleteAsync(Default.GetOrderEndpoint(nameof(Order)), id);
-
-                if (!result.IsError)
-                {
-                    success = true;
-                }
-            }
-
-            return Json(new { success });
-        }
     }
 }

@@ -9,11 +9,13 @@ namespace eBlocksWeb.Controllers
     public class ProductController : Controller
     {
         private readonly ICommandHandler<Product> _commandHandler;
+        private readonly ICommandHandler<string> _deleteCommandHandler;
         private readonly IQueryHandler<Product> _queryHandler;
 
-        public ProductController(ICommandHandler<Product> ProductCommandHandler, IQueryHandler<Product> ProductQueryHandler)
+        public ProductController(ICommandHandler<Product> ProductCommandHandler, ICommandHandler<string> deleteCommandHandler, IQueryHandler<Product> ProductQueryHandler)
         {
             _commandHandler = ProductCommandHandler;
+            _deleteCommandHandler = deleteCommandHandler;
             _queryHandler = ProductQueryHandler;
         }
 
@@ -55,13 +57,15 @@ namespace eBlocksWeb.Controllers
             return Json(new { result });
         }
 
+        [HttpPost]
+        [Route("/product/delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var success = false;
 
             if (ModelState.IsValid)
             {
-                var result = await _commandHandler.DeleteAsync(Default.GetProductEndpoint(nameof(Product)), id);
+                var result = await _deleteCommandHandler.DeleteAsync(Default.GetProductEndpoint(nameof(Product)), id);
 
                 if (!result.IsError)
                 {

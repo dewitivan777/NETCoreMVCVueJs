@@ -96,9 +96,7 @@
             </v-data-table>
         </v-app>
     </div>
-
 </template>
-
 
 <script>
     export default {
@@ -128,6 +126,7 @@
                     { text: 'Website', value: 'website' },
                     { text: 'Actions', value: 'actions', sortable: false },
                 ],
+                deleteIndex: -1,
                 editedIndex: -1,
                 editedItem: {
                     id: '',
@@ -188,10 +187,23 @@
             },
 
             deleteItem(item) {
-                const index = this.supplier.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.supplier.splice(index, 1)
-            },
+                this.deleteIndex = this.suppliers.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                let self = this;
 
+                confirm('Are you sure you want to delete this item?') &&
+                    self.$axios({
+                        method: 'post',
+                        url: '/supplier/delete/' + self.editedItem.id,
+                    }).then((response) => {
+                        console.log(response);
+                        if (response.data.success) {
+                            self.suppliers.splice(self.deleteIndex, 1)
+                        }
+                    }, (error) => {
+                        console.log(error);
+                    });
+            },
             close() {
                 this.dialog = false
                 this.$nextTick(() => {

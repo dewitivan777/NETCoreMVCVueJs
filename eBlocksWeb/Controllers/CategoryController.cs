@@ -9,11 +9,13 @@ namespace eBlocksWeb.Controllers
     public class CategoryController : Controller
     {
         private readonly ICommandHandler<Category> _commandHandler;
+        private readonly ICommandHandler<string> _deleteCommandHandler;
         private readonly IQueryHandler<Category> _queryHandler;
 
-        public CategoryController(ICommandHandler<Category> CategoryCommandHandler, IQueryHandler<Category> CategoryQueryHandler)
+        public CategoryController(ICommandHandler<Category> CategoryCommandHandler,  ICommandHandler<string> deleteCommandHandler, IQueryHandler<Category> CategoryQueryHandler)
         {
             _commandHandler = CategoryCommandHandler;
+            _deleteCommandHandler = deleteCommandHandler;
             _queryHandler = CategoryQueryHandler;
         }
 
@@ -55,13 +57,16 @@ namespace eBlocksWeb.Controllers
             return Json(new { result });
         }
 
+
+        [HttpPost]
+        [Route("/category/delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var success = false;
 
             if (ModelState.IsValid)
             {
-                var result = await _commandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Category)), id);
+                var result = await _deleteCommandHandler.DeleteAsync(Default.GetClassificationEndpoint(nameof(Category)), id);
 
                 if (!result.IsError)
                 {

@@ -49,6 +49,7 @@
                                 </v-card-actions>
                             </v-card>
                         </v-dialog>
+
                     </v-toolbar>
                 </template>
                 <template v-slot:item.imageUrl="{ item }">
@@ -105,6 +106,7 @@
                     { text: 'Actions', value: 'actions', sortable: false },
                 ],
                 editedIndex: -1,
+                deleteIndex: -1,
                 editedItem: {
                     id: '',
                     name: '',
@@ -147,12 +149,24 @@
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
-
             deleteItem(item) {
-                const index = this.categories.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1)
-            },
+                this.deleteIndex = this.categories.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                let self = this;
 
+                confirm('Are you sure you want to delete this item?') &&
+                    self.$axios({
+                        method: 'post',
+                        url: '/category/delete/'+ self.editedItem.id,
+                    }).then((response) => {
+                        console.log(response);
+                        if (response.data.success) {
+                            self.categories.splice(self.deleteIndex, 1)
+                        }
+                    }, (error) => {
+                            console.log(error);
+                    });
+            },
             close() {
                 this.dialog = false
                 this.$nextTick(() => {
@@ -160,10 +174,9 @@
                     this.editedIndex = -1
                 })
             },
-
             save() {
-                    let self = this;
-                    self.modelstate = {}
+                let self = this;
+                self.modelstate = {}
                 if (this.editedIndex > -1) {
                     this.$axios({
                         method: 'post',
@@ -197,7 +210,7 @@
                         }
                     });
                 }
-            }
+            },
         },
         mounted() {
             this.search()

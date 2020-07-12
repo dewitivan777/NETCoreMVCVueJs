@@ -243,6 +243,7 @@
                     { text: 'ReorderLevel', value: 'reorderLevel' },
                     { text: 'Actions', value: 'actions', sortable: false },
                 ],
+                deleteIndex:-1,
                 editedIndex: -1,
                 editedItem: {
                     id: '',
@@ -392,12 +393,24 @@
                 this.editedItem = Object.assign({}, item)
                 this.dialog = true
             },
+         deleteItem(item) {
+                this.deleteIndex = this.products.indexOf(item)
+                this.editedItem = Object.assign({}, item)
+                let self = this;
 
-            deleteItem(item) {
-                const index = this.products.indexOf(item)
-                confirm('Are you sure you want to delete this item?') && this.products.splice(index, 1)
+                confirm('Are you sure you want to delete this item?') &&
+                    self.$axios({
+                        method: 'post',
+                        url: '/product/delete/'+ self.editedItem.id,
+                    }).then((response) => {
+                        console.log(response);
+                        if (response.data.success) {
+                            self.products.splice(self.deleteIndex, 1)
+                        }
+                    }, (error) => {
+                            console.log(error);
+                    });
             },
-
             close() {
                 this.dialog = false
                 this.$nextTick(() => {
