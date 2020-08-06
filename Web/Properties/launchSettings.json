@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "eBlocksWeb": {
+    "Web": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "http://localhost:50080",
